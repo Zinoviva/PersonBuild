@@ -1,11 +1,9 @@
-import java.util.OptionalInt;
-
 public class Main {
     public static void main(String[] args) {
         Person mom = new PersonBuilder()
                 .setName("Анна")
                 .setSurname("Вольф")
-                .setAge(OptionalInt.of(31))
+                .setAge(31)
                 .setAddress("Сидней")
                 .build();
         Person son = mom.newChildBuilder()
@@ -22,7 +20,7 @@ public class Main {
 
         try {
             // Возраст недопустимый
-            new PersonBuilder().setAge(OptionalInt.of(-100)).build();
+            new PersonBuilder().setAge(-100).build();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

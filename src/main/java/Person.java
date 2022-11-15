@@ -1,10 +1,23 @@
+import java.util.Objects;
+import java.util.Optional;
 import java.util.OptionalInt;
 
 public class Person {
     protected final String name;  //Каждый человек обязан иметь имя, причём с момента создания объекта изменить его нельзя.
     protected final String surname;  //Каждый человек обязан иметь фамилию, причём с момента создания объекта изменить её нельзя.
-    protected int age; //возраст
-    protected String address;  //Текущий город жительства
+    protected OptionalInt age; //возраст
+    protected Optional<String> address;  //Текущий город жительства
+
+    {
+        age = OptionalInt.empty();
+        address = Optional.empty();
+    }
+    public Person(String name, String surname, int age, String city) {
+        this.name = name;
+        this.surname = surname;
+        this.age = OptionalInt.of(age);
+        this.address = Optional.ofNullable(city);
+    }
 
     public Person(String name, String surname) {
         this.name = name;
@@ -14,33 +27,9 @@ public class Person {
     public Person(String name, String surname, int age) {
         this.name = name;
         this.surname = surname;
-        this.age = age;
+        this.age = OptionalInt.of(age);
     }
 
-    public boolean hasAge() {  //Возраст человека может быть неизвестен, в этом случае метод boolean hasAge()
-        // должен вернуть false, иначе - true.
-//        return age.isPresent();  //если значение присутствует - вернет true
-        return age != 0;
-    }
-
-    public void happyBirthday() { //Если возраст человека известен, то с момента создания объекта он может
-        // быть изменён только увеличением на единицу
-        if (hasAge() == true) {
-//    age.getAsInt();//вернет значение
-//            age.ifPresent(age -> age++);
-            age++;
-        }
-    }
-
-    public boolean hasAddress() { //метод boolean hasAddress() должен вернуть true если адрес известен, иначе - false
-        return address != null;
-    }
-
-    public void setAddress(String address) {  //выставлен в любой адрес через setAddress
-        if (hasAddress() == false) {
-            this.address = address;
-        }
-    }
 
     public String getName() {
         return name;
@@ -55,7 +44,24 @@ public class Person {
     }
 
     public String getAddress() {
-        return address;
+        return address.orElse("Неизвестен");
+    }
+    public boolean hasAge() {  //Возраст человека может быть неизвестен, в этом случае метод boolean hasAge()
+        // должен вернуть false, иначе - true.
+        return age.isPresent();  //если значение присутствует - вернет true
+    }
+
+    public void happyBirthday() { //Если возраст человека известен, то с момента создания объекта он может
+        // быть изменён только увеличением на единицу
+        if (hasAge() == true) {
+//    age.getAsInt();//вернет значение
+//            age.ifPresent(age -> age++);
+            age = OptionalInt.of(age.getAsInt() + 1);
+        }
+    }
+
+    public boolean hasAddress() { //метод boolean hasAddress() должен вернуть true если адрес известен, иначе - false
+        return address.isPresent();  //если значение присутствует - вернет true
     }
 
     @Override
@@ -63,18 +69,22 @@ public class Person {
         return "People{" +
                 "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", age=" + age +
-                ", address=" + address +
+                ", age=" + (age.isEmpty() ? "Unknown" : age.getAsInt()) +
+                ", address=" + getAddress() +
                 '}';
     }
 
     @Override
     public int hashCode() {
-        return age;
+        return Objects.hash(name, surname, age, address);
     }
 
     public PersonBuilder newChildBuilder() {
-return null;
+        return new PersonBuilder()
+                .setName(name)
+                .setSurname(surname)
+                .setAddress(getAddress())
+                .setAge(1);
     }  //метод для получения полузаполненного билдера для ребёнка в класс Person
     // а именно: с уже заполненными фамилией (родительской), возрастом и текущим городом жительства (родительским).
 }

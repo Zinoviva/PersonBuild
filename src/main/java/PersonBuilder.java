@@ -1,46 +1,56 @@
+import java.util.Optional;
 import java.util.OptionalInt;
 
 public class PersonBuilder {
 
-    private String name;
-    private String surname;
+    private Optional<String> name;
+    private Optional<String> surname;
     private OptionalInt age;
-    private String address;
+    private Optional<String> address;
 //Каждый метод добавления данных в билдер должен возвращать самого себя чтобы можно было сделать
+
+    public PersonBuilder() {
+        name = Optional.empty();
+        surname = Optional.empty();
+        age = OptionalInt.empty();
+        address = Optional.empty();
+    }
+
     public PersonBuilder setName(String name) {
-        this.name = name;
+        this.name = Optional.ofNullable(name);
         return this;
     }
 
     public PersonBuilder setSurname(String surname) {
-        this.surname = surname;
+        this.surname = Optional.ofNullable(surname);
         return this;
     }
 
-    public PersonBuilder setAge(OptionalInt age) {
-        this.age = age;
+    public PersonBuilder setAge(int age) {
+        if (age < 0) {
+//            throw new IllegalArgumentException("Возраст некорректен"); //ловим ошибку
+            System.out.println("IllegalArgumentException - Возраст некорректен");//выкидываем ошибку
+        }
+        this.age = OptionalInt.of(age);
         return this;
     }
 
     public PersonBuilder setAddress(String address) {
-        this.address = address;
+        this.address = Optional.ofNullable(address);
         return this;
     }
 
     public Person build() {  // возвращающий объект класса Person с указанными билдеру данными
-        try {
-            if (name != null && surname != null && age != null) {
-                return new Person(name, surname, age.getAsInt()); //getAsInt-Если в этом присутствует значение OptionalInt, возвращает значение
-            }
-        } catch (IllegalStateException e) { //сли мы билдеру не указали достаточное количество данных (например, не указали фамилию), то метод build() должен выкинуть IllegalStateException с осмысленным сообщением.
-            if (surname == null) {
-                System.out.println("Ошибка - не указана фамилия");
-            }
-        } catch (IllegalArgumentException e) {  //Если же мы передали неподходящие данные билдеру (например, некорректный возрст builder.setAge(-100)), то именно этот метод должен выкинуть IllegalArgumentException с осмысленным сообщением.
-            if (age.equals(-100)) {  //Указывает, является ли какой-либо другой объект "равным" этому OptionalInt .
-                System.out.println("Ошибка - не верно указан возраст");
-            }
+        if (name.isEmpty() || surname.isEmpty()) {
+//            throw new IllegalStateException("Ошибка! Необходимо ввести имя и фамилию"); //ловим ошибку
+            System.out.println("IllegalStateException - Ошибка! Необходимо ввести имя и фамилию");//выкидываем ошибку
         }
-        return new Person(name, surname, age.getAsInt());
+        Person person;
+        if (age.isEmpty()) {
+            person = new Person(name.get(), surname.get());
+        } else {
+            person = new Person(name.get(), surname.get(), age.getAsInt());
+        }
+        return person;
     }
 }
