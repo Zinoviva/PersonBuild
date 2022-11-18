@@ -41,15 +41,28 @@ public class PersonBuilder {
     }
 
     public Person build() {  // возвращающий объект класса Person с указанными билдеру данными
-        if (name.isEmpty() || surname.isEmpty()) {
-//            throw new IllegalStateException("Ошибка! Необходимо ввести имя и фамилию"); //ловим ошибку
-            System.out.println("IllegalStateException - Ошибка! Необходимо ввести имя и фамилию");//выкидываем ошибку
-        }
-        Person person;
-        if (age.isEmpty()) {
-            person = new Person(name.get(), surname.get());
-        } else {
-            person = new Person(name.get(), surname.get(), age.getAsInt());
+//        if (name.isEmpty() || surname.isEmpty()) {
+////            throw new IllegalStateException("Ошибка! Необходимо ввести имя и фамилию"); //ловим ошибку
+//        }
+//        Person person;
+//        if (age.isEmpty()) {
+//            person = new Person(name.get(), surname.get());
+//        } else {
+//            person = new Person(name.get(), surname.get(), age.getAsInt());
+//        }
+//        return person;
+
+        Person person = null;
+        try {
+            if (age.isEmpty()) {
+                person = new Person(name.get(), surname.get());
+            } else {
+                person = new Person(name.get(), surname.get(), age.getAsInt());
+            }
+        } catch (IllegalStateException e){
+            if (name.isEmpty() || surname.isEmpty()) {
+                System.out.println("Ошибка! Необходимо ввести имя и фамилию");//выкидываем ошибку
+            }
         }
         return person;
     }
