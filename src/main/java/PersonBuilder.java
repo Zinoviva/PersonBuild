@@ -28,8 +28,8 @@ public class PersonBuilder {
 
     public PersonBuilder setAge(int age) {
         if (age < 0) {
-//            throw new IllegalArgumentException("Возраст некорректен"); //ловим ошибку
-            System.out.println("IllegalArgumentException - Возраст некорректен");//выкидываем ошибку
+            throw new IllegalArgumentException("Возраст некорректен"); //выкидываем ошибку
+//            System.out.println("IllegalArgumentException - Возраст некорректен");
         }
         this.age = OptionalInt.of(age);
         return this;
